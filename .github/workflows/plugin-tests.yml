@@ -76,17 +76,10 @@ jobs:
           files: "plugins/${{ steps.repo-name.outputs.value }}/test/javascripts"
 
       - name: Setup plugin guard
-        run: |
-          mkdir -p ${{ github.workspace }}/lib/plugin_guard
-          mkdir -p ${{ github.workspace }}/lib/plugin_guard/extensions
-          mkdir -p ${{ github.workspace }}/plugins_incompatible
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard.rb ${{ github.workspace }}/lib/plugin_guard.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/extensions/discourse.rb ${{ github.workspace }}/lib/plugin_guard/extensions/discourse.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/extensions/plugin_instance.rb ${{ github.workspace }}/lib/plugin_guard/extensions/plugin_instance.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/error.rb ${{ github.workspace }}/lib/plugin_guard/error.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/handler.rb ${{ github.workspace }}/lib/plugin_guard/handler.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/tasks/plugin_guard.rake ${{ github.workspace }}/lib/tasks/plugin_guard.rake
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_initialization_guard.rb ${{ github.workspace }}/lib/plugin_initialization_guard.rb
+        run: bin/setup.sh
+        env:
+          DISCOURSE_ROOT: ${{ github.workspace }}
+          PLUGIN_GUARD_ROOT: ${{ github.workspace }}/plugins/discourse-plugin-guard
 
       - name: Setup Git
         run: |
