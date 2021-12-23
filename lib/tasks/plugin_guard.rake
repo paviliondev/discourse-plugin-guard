@@ -4,14 +4,14 @@ PATH_WHITELIST ||= [
   'message-bus'
 ]
 
-def file_exists(guard, directive, directive_path)
+def file_exists(plugin_dir, directive, directive_path)
   paths = []
 
   if directive === 'require'
     paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path}")
     paths.push("#{Rails.root}/vendor/assets/javascripts/#{directive_path}")
   elsif directive === 'require_tree'
-    paths.push("#{guard.handler.plugin_dir}/assets/javascripts/#{directive_path[2..-1]}")
+    paths.push("#{plugin_dir}/assets/javascripts/#{directive_path[2..-1]}")
   elsif directive === 'require_tree_discourse'
     paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path}")
   end
@@ -26,10 +26,13 @@ task 'assets:precompile:before' do
   path = "#{Rails.root}/plugins"
 
   Dir.each_child(path) do |dir|
-    if guard = PluginGuard.new("#{path}/#{dir}")
+    guard = PluginGuard.new("#{path}/#{dir}")
+    handler = guard.handler
+
+    if handler
       begin
-        guard.handler.precompiled_assets.each do |filename|
-          pre_path = "#{guard.handler.plugin_dir}/assets/javascripts/#{filename}"
+        handler.precompiled_assets.each do |filename|
+          pre_path = "#{handler.plugin_dir}/assets/javascripts/#{filename}"
 
           unless File.exists?(pre_path)
             ## This will not prevent Discourse from working so we only warn
@@ -43,7 +46,7 @@ task 'assets:precompile:before' do
               directive_path = directive_parts.last.split('.')[0]
               directive = directive_parts[1]
 
-              unless file_exists(guard, directive, directive_path)
+              unless file_exists(handler.plugin_dir, directive, directive_path)
                 raise PluginGuard::Error.new("Sprockets directive #{directive_path} does not exist.")
               end
             end
