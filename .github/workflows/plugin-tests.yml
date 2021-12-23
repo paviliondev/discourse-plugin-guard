@@ -76,7 +76,7 @@ jobs:
           files: "plugins/${{ steps.repo-name.outputs.value }}/test/javascripts"
 
       - name: Setup plugin guard
-        run: bin/setup.sh
+        run: $PLUGIN_GUARD_ROOT/bin/setup.sh
         env:
           DISCOURSE_ROOT: ${{ github.workspace }}
           PLUGIN_GUARD_ROOT: ${{ github.workspace }}/plugins/discourse-plugin-guard
