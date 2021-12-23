@@ -80,13 +80,13 @@ jobs:
           mkdir -p ${{ github.workspace }}/lib/plugin_guard
           mkdir -p ${{ github.workspace }}/lib/plugin_guard/extensions
           mkdir -p ${{ github.workspace }}/plugins_incompatible
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard.rb ${{ github.workspace }}/lib/plugin_guard.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/extensions/discourse.rb ${{ github.workspace }}/lib/plugin_guard/extensions/discourse.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/extensions/plugin_instance.rb ${{ github.workspace }}/lib/plugin_guard/extensions/plugin_instance.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/error.rb ${{ github.workspace }}/lib/plugin_guard/error.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/handler.rb ${{ github.workspace }}/lib/plugin_guard/handler.rb
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/tasks/plugin_guard.rake ${{ github.workspace }}/lib/tasks/plugin_guard.rake
-          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_initialization_guard.rb ${{ github.workspace }}/lib/plugin_initialization_guard.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard.rb ${{ github.workspace }}/lib/plugin_guard.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/extensions/discourse.rb ${{ github.workspace }}/lib/plugin_guard/extensions/discourse.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/extensions/plugin_instance.rb ${{ github.workspace }}/lib/plugin_guard/extensions/plugin_instance.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/error.rb ${{ github.workspace }}/lib/plugin_guard/error.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_guard/handler.rb ${{ github.workspace }}/lib/plugin_guard/handler.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/tasks/plugin_guard.rake ${{ github.workspace }}/lib/tasks/plugin_guard.rake
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-guard/lib/plugin_initialization_guard.rb ${{ github.workspace }}/lib/plugin_initialization_guard.rb
 
       - name: Setup Git
         run: |
