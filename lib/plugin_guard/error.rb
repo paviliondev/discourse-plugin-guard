@@ -9,7 +9,7 @@ class ::PluginGuard::Error < StandardError
 
   def self.handle(e)
     plugin_path = extract_plugin_path(e)
-    raise new(e) unless plugin_path
+    raise new(e) unless plugin_path || plugin_path.include?("discourse-plugin-manager")
 
     if guard = ::PluginGuard.new(plugin_path)
       guard.handle(message: e.message, backtrace: e.backtrace.join($/))
