@@ -20,7 +20,7 @@ PluginGuard.reopenClass({
     return ajax(`${basePath}/registration`, {
       type: "DELETE",
     }).catch(popupAjaxError);
-  }
+  },
 });
 
 export default PluginGuard;

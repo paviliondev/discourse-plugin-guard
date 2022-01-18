@@ -29,7 +29,7 @@ class PluginGuard::Registration
 
   def self.set(attrs)
     raw = PluginStore.get(PluginGuard::NAMESPACE, registration_db_key) || {}
-    attrs.each { |k,v| raw[k.to_s] = v }
+    attrs.each { |k, v| raw[k.to_s] = v }
     PluginStore.set(PluginGuard::NAMESPACE, registration_db_key, raw)
   end
 

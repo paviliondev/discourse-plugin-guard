@@ -4,7 +4,7 @@ import PluginGuard from "../models/plugin-guard";
 import { equal } from "@ember/object/computed";
 
 export default Component.extend({
-  classNames: ['plugin-guard-registration'],
+  classNames: ["plugin-guard-registration"],
   registered: equal("registration.status", "registered"),
 
   @discourseComputed("registered")
@@ -31,10 +31,9 @@ export default Component.extend({
     unregister() {
       this.set("unregistering", true);
 
-      PluginGuard.unregister()
-        .finally(() => {
-          this.set("unregistering", false);
-        });
+      PluginGuard.unregister().finally(() => {
+        this.set("unregistering", false);
+      });
     },
 
     register() {
@@ -42,7 +41,8 @@ export default Component.extend({
     },
 
     showRegistration() {
-      window.open(url, '_blank').focus();
-    }
-  }
+      const serverUrl = this.registration.server_url;
+      window.open(`${serverUrl}/my/plugins`, "_blank").focus();
+    },
+  },
 });
