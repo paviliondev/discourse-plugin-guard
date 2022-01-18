@@ -10,6 +10,7 @@ hooks:
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/extensions/plugin_instance.rb lib/plugin_guard/extensions/plugin_instance.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/error.rb lib/plugin_guard/error.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/handler.rb lib/plugin_guard/handler.rb
+          - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/store.rb lib/plugin_guard/store.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard.rb lib/plugin_guard.rb
           - cp -rf /shared/discourse-plugin-guard/lib/tasks/plugin_guard.rake lib/tasks/plugin_guard.rake
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_initialization_guard.rb lib/plugin_initialization_guard.rb

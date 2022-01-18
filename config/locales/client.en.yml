@@ -1,0 +1,17 @@
+en:
+  js:
+    plugin_guard:
+      title: Plugin Guard
+      unregistered:
+        label: Register Plugin Guard
+        title: Register the Plugin Guard for this forum.
+      registered:
+        label: Plugin Guard Active
+        title: The Plugin Guard is active on this forum.
+      unregister:
+        label: remove
+        title: Unregister the Plugin Guard for this forum.
+  admin_js:
+    admin:
+      plugins:
+        guarded: Guarded Plugin

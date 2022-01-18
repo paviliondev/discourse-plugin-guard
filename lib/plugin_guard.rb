@@ -33,7 +33,20 @@ class ::PluginGuard
   def self.root_dir
     Rails.root
   end
+
+  def self.client
+    Rails.env.development? ? "localhost:4200" : Discourse.current_hostname
+  end
+
+  def self.server
+    Rails.env.development? ? "localhost:4200" : "plugins.discourse.pavilion.tech"
+  end
+
+  def self.protocol
+    Rails.env.development? ? "http" : "https"
+  end
 end
 
 require_relative 'plugin_guard/error.rb'
 require_relative 'plugin_guard/handler.rb'
+require_relative 'plugin_guard/store.rb'

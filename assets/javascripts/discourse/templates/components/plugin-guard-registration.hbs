@@ -1,0 +1,12 @@
+{{#if registered}}
+  {{conditional-loading-spinner size="small" condition=unregistering}}
+  <a {{action "unregister"}} title={{i18n "plugin_guard.unregister.title"}} role="button" class="unregister">
+    {{i18n "plugin_guard.unregister.label"}}
+  </a>
+{{/if}}
+{{d-button
+  icon="shield-alt"
+  class=btnClass
+  label=btnLabel
+  title=btnTitle
+  action=(action btnAction)}}

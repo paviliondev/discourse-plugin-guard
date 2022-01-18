@@ -12,7 +12,7 @@ class ::PluginGuard::Handler
   def perform(message, backtrace)
     clean_up_assets
     move_to_incompatible
-    after_perform(message, backtrace)
+    store_error(message, backtrace)
   end
 
   def precompiled_assets
@@ -47,15 +47,8 @@ class ::PluginGuard::Handler
     move_to(PluginGuard.incompatible_dir)
   end
 
-  def after_perform(message, backtrace)
-    if plugin_manager_present?
-      PluginManager::Log.add(
-        plugin_name: plugin_name,
-        status: PluginManager::Manifest.status[:incompatible],
-        message: message,
-        backtrace: backtrace,
-      )
-    end
+  def store_error(message, backtrace)
+    PluginGuard::Store.set(@plugin_name, message: message, backtrace: backtrace)
   end
 
   protected
@@ -72,9 +65,5 @@ class ::PluginGuard::Handler
     Rails.configuration.assets.paths.reject! { |path| path.include?(plugin_dir) }
     Rails.configuration.assets.precompile.reject! { |file| file.to_s.include?(plugin_name) }
     I18n.load_path.reject! { |file| file.include?(plugin_name) }
-  end
-
-  def plugin_manager_present?
-    defined?(PluginManager::Log) == 'constant'
   end
 end

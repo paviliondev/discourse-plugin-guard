@@ -1,0 +1,13 @@
+.admin-plugins h3 {
+  display: inline-block;
+}
+
+.plugin-guard-registration {
+  float: right;
+  display: flex;
+  align-items: center;
+
+  .unregister {
+    margin-right: 1em;
+  }
+}
