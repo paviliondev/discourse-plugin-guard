@@ -11,7 +11,10 @@ class PluginGuard::Registration
   end
 
   def active?
-    authorization.active? && plugins.present? && updated_at && updated_at > 3.days.ago
+    authorization.active? && plugins.present? && (
+      (updated_at && updated_at > 3.days.ago) || ## user registered
+      authorization.site_key? ## site registered
+    )
   end
 
   def authorization
@@ -45,16 +48,16 @@ class PluginGuard::Registration
   def self.update
     auth = PluginGuard::Authorization.get
 
-    if auth.active?
-      url = "#{::PluginGuard.protocol}://#{::PluginGuard.server}/plugin-manager/user/register"
+    if auth.active? && auth.user_key?
+      url = "#{::PluginGuard.server_url}/plugin-manager/user/register"
       response = Excon.post(url,
         headers: {
           "User-Api-Key" => auth.api_key,
           "Content-Type" => "application/json"
         },
         body: {
-          plugin_names: ::Discourse.unofficial_plugins.map(&:name),
-          domain: PluginGuard.client
+          plugins: registrable_plugins,
+          domain: PluginGuard.client_domain
         }.to_json
       )
 
@@ -65,7 +68,7 @@ class PluginGuard::Registration
           return false
         end
 
-        if data[:success]
+        if data[:success] == "OK"
           set(updated_at: data[:updated_at], plugins: data[:plugins])
           return true
         end
@@ -74,5 +77,9 @@ class PluginGuard::Registration
 
     set(updated_at: nil)
     false
+  end
+
+  def self.registrable_plugins
+    ::Discourse.unofficial_plugins.map(&:name)
   end
 end

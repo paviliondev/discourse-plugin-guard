@@ -6,6 +6,7 @@
 # url: https://github.com/paviliondev/discourse-plugin-guard.git
 
 register_asset "stylesheets/common/admin.scss"
+hide_plugin if self.respond_to?(:hide_plugin)
 
 if Rails.env.test?
   %w(
@@ -24,6 +25,7 @@ after_initialize do
     ../lib/plugin_guard/registration.rb
     ../lib/plugin_guard/status.rb
     ../lib/plugin_guard/store.rb
+    ../extensions/admin_plugin_serializer.rb
     ../app/controllers/plugin_guard/authorization_controller.rb
     ../app/controllers/plugin_guard/registration_controller.rb
     ../app/serializers/plugin_guard/registration_serializer.rb
@@ -33,34 +35,9 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
 
-  startup_errors = PluginGuard::Store.all
-  if startup_errors.present?
-    registration = PluginGuard::Registration.get
-
-    if registration.active?
-      registered_plugin_errors = startup_errors.select do |plugin_name, _|
-        registration.plugins.include?(plugin_name)
-      end
-
-      PluginGuard::Status.update(registered_plugin_errors)
-    end
-
-    PluginGuard::Store.clear
+  if SiteSetting.plugin_manager_api_key.present?
+    PluginGuard::Authorization.set_site_api_key(SiteSetting.plugin_manager_api_key)
   end
 
-  class ::AdminPluginSerializer
-    attributes :guarded
-
-    def guarded
-      registration &&
-      registration.plugins.present? &&
-      registration.plugins.include?(name)
-    end
-
-    protected
-
-    def registration
-      @registration ||= PluginGuard::Registration.get
-    end
-  end
+  PluginGuard::Status.handle_startup_errors
 end

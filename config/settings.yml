@@ -1,0 +1,4 @@
+plugins:
+  plugin_manager_api_key:
+    default: ''
+    hidden: true

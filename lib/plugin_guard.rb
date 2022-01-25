@@ -34,16 +34,24 @@ class ::PluginGuard
     Rails.root
   end
 
-  def self.client
+  def self.client_domain
     Rails.env.development? ? "localhost:4200" : Discourse.current_hostname
   end
 
-  def self.server
+  def self.server_domain
     Rails.env.development? ? "localhost:4200" : "plugins.discourse.pavilion.tech"
   end
 
   def self.protocol
     Rails.env.development? ? "http" : "https"
+  end
+
+  def self.server_url
+    "#{PluginGuard.protocol}://#{PluginGuard.server_domain}"
+  end
+
+  def self.client_url
+    "#{PluginGuard.protocol}://#{PluginGuard.client_domain}"
   end
 end
 

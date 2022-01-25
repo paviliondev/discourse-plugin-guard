@@ -4,6 +4,10 @@ class PluginGuard::AuthorizationController < ::Admin::AdminController
   skip_before_action :check_xhr, :preload_json, :verify_authenticity_token
 
   def authorize
+    if authorization.site_key?
+      render_json_error I18n.t("plugin_guard.error.plugin_manager_api_key"), status: :unprocessable_entity
+    end
+
     request_id = SecureRandom.hex(32)
     cookies[:user_api_request_id] = request_id
 

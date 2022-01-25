@@ -3,16 +3,26 @@ class PluginGuard::Authorization
 
   attr_reader :client_id,
               :auth_at,
-              :api_key
+              :api_key,
+              :user_key
 
   def initialize(attrs)
     @api_key = attrs[:key]
     @auth_at = attrs[:auth_at]
     @client_id = get_client_id || set_client_id
+    @user_key = attrs[:user_key]
   end
 
   def active?
     @api_key.present?
+  end
+
+  def user_key?
+    @user_key
+  end
+
+  def site_key?
+    api_key && !user_key?
   end
 
   def generate_keys(user_id, request_id)
@@ -52,12 +62,12 @@ class PluginGuard::Authorization
       public_key: keys.public_key,
       nonce: keys.nonce,
       client_id: client_id,
-      auth_redirect: "#{PluginGuard.protocol}://#{PluginGuard.client}/admin/plugins/plugin-guard/authorize/callback",
+      auth_redirect: "#{PluginGuard.client_url}/admin/plugins/plugin-guard/authorize/callback",
       application_name: SiteSetting.title,
       scopes: "discourse-plugin-manager:plugin_user"
     }
 
-    uri = URI.parse("#{PluginGuard.protocol}://#{PluginGuard.server}/user-api-key/new")
+    uri = URI.parse("#{PluginGuard.server_url}/user-api-key/new")
     uri.query = URI.encode_www_form(params)
     uri.to_s
   end
@@ -85,9 +95,25 @@ class PluginGuard::Authorization
   def self.set(key)
     PluginStore.set(PluginGuard::NAMESPACE, authorization_db_key,
       key: key,
+      user_key: true,
       auth_at: DateTime.now.iso8601(3)
     )
     get
+  end
+
+  def self.set_site_api_key(key)
+    valid = validate_site_api_key(key)
+    return false if !valid
+
+    PluginStore.set(PluginGuard::NAMESPACE, authorization_db_key,
+      key: key,
+      user_key: false,
+      auth_at: nil
+    )
+
+    PluginGuard::Registration.set(
+      plugins: PluginGuard::Registration.registrable_plugins
+    )
   end
 
   def self.remove
@@ -96,6 +122,30 @@ class PluginGuard::Authorization
 
   def self.authorization_db_key
     "authorization"
+  end
+
+  def self.validate_site_api_key(key)
+    begin
+      response = Excon.get("#{PluginGuard.server_url}/plugin-manager/status/validate-key.json",
+        headers: {
+          "Api-Key" => key,
+          "Api-Username" => "system",
+          "Content-Type" => "application/json"
+        },
+      )
+    rescue Excon::Error
+      return false
+    end
+
+    return false unless response.status == 200
+
+    begin
+      data = JSON.parse(response.body).symbolize_keys
+    rescue JSON::ParserError
+      return false
+    end
+
+    data[:success] == "OK"
   end
 
   private

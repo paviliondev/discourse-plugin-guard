@@ -1,4 +1,4 @@
-{{#if registered}}
+{{#if canUnregister}}
   {{conditional-loading-spinner size="small" condition=unregistering}}
   <a {{action "unregister"}} title={{i18n "plugin_guard.unregister.title"}} role="button" class="unregister">
     {{i18n "plugin_guard.unregister.label"}}
@@ -9,4 +9,5 @@
   class=btnClass
   label=btnLabel
   title=btnTitle
-  action=(action btnAction)}}
+  action=(action btnAction)
+  disabled=btnDisabled}}

@@ -1,3 +1,5 @@
 en:
   plugin_guard:
     title: Plugin Guard
+    error:
+      plugin_manager_api_key: The plugin guard has been registered via the plugin manager api key setting.
