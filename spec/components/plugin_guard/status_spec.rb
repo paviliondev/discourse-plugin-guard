@@ -80,7 +80,8 @@ describe PluginGuard::Status do
         backtrace: backtrace
       }
     ]
-    described_class.update(plugins)
+    status = described_class.new(plugins)
+    status.update
 
     expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
       headers: request_headers,
@@ -144,7 +145,9 @@ describe PluginGuard::Status do
       headers: {}
     )
 
-    described_class.update_all
+    plugins = described_class.all_plugins
+    status = described_class.new(plugins)
+    status.update
 
     expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
       headers: request_headers,

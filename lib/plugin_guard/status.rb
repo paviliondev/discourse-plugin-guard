@@ -1,29 +1,34 @@
 # frozen_string_literal: true
 
 class ::PluginGuard::Status
-  cattr_accessor :errors
+  attr_reader :plugins,
+              :errors
 
-  def self.status
-    Enum.new(
-      unknown: 0,
-      compatible: 1,
-      incompatible: 2
-    )
+  def initialize(plugins)
+    @plugins = plugins
   end
 
-  def self.get_sha(plugin_dir)
-    PluginGuard.run_shell_cmd('git rev-parse HEAD', chdir: plugin_dir)
+  def errors
+    @errors ||= ActiveModel::Errors.new(self)
   end
 
-  def self.get_branch(plugin_dir)
-    PluginGuard.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: plugin_dir)
+  def add_error(msg)
+    errors.add(:base, msg) unless errors[:base].include?(msg)
   end
 
-  def self.fill_git_data(plugins)
-    plugins.reduce([]) do |result, plugin|
+  def registration
+    @registration ||= PluginGuard::Registration.get
+  end
+
+  def registered_plugins
+    plugins.select { |plugin| registration.plugins.include?(plugin[:name]) }
+  end
+
+  def fill_git_data
+    @plugins = plugins.reduce([]) do |result, plugin|
       if plugin[:directory].present?
-        sha = get_sha(plugin[:directory])
-        branch = get_branch(plugin[:directory])
+        sha = PluginGuard.run_shell_cmd('git rev-parse HEAD', chdir: plugin[:directory])
+        branch = PluginGuard.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: plugin[:directory])
 
         if sha.present? && branch.present?
           result << plugin.except(:directory).merge(sha: sha, branch: branch)
@@ -34,29 +39,18 @@ class ::PluginGuard::Status
     end
   end
 
-  def self.update(plugins)
-    errors = []
+  def update
+    add_error("Registration is not active.") unless registration.active?
+    add_error("No registered plugins.") unless plugins.any?
 
-    registration = PluginGuard::Registration.get
-    unless registration.active?
-      errors << "Registration is not active"
-      return false
-    end
+    return false if errors.any?
 
-    plugins = plugins.select { |plugin| registration.plugins.include?(plugin[:name]) }
-    unless plugins.any?
-      errors << "No plugins are registered."
-      return false
-    end
+    fill_git_data
+    add_error("Failed to add git data to plugins.") unless plugins.any?
 
-    plugins = fill_git_data(plugins)
-    unless plugins.any?
-      errors << "Failed to add git data to plugins."
-      return false
-    end
+    return false if errors.any?
 
     header_key = registration.authorization.user_key? ? "User-Api-Key" : "Api-Key"
-
     response = Excon.post("#{PluginGuard.server_url}/plugin-manager/status",
       headers: {
         "#{header_key}" => registration.authorization.api_key,
@@ -73,43 +67,51 @@ class ::PluginGuard::Status
     )
 
     unless response.status == 200
-      errors << "Failed to post status to plugin manager: #{response.body.to_s}"
+      add_error("Failed to post status to plugin manager: #{response.body.to_s}")
       return false
     end
 
     begin
       data = JSON.parse(response.body).deep_symbolize_keys
     rescue JSON::ParserError
-      errors << "Failed to parse response body"
+      add_error("Failed to parse response body")
       return false
     end
 
     data[:success] == "OK"
   end
 
-  def self.update_all
+  def self.status
+    Enum.new(
+      unknown: 0,
+      compatible: 1,
+      incompatible: 2
+    )
+  end
+
+  def self.all_plugins
     plugins = []
 
-    Plugin::Instance.find_all("#{PluginGuard.root_dir}#{PluginGuard.compatible_dir}").each do |instance|
+    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.compatible_dir}").each do |instance|
       if PluginGuard::Registration.registrable_plugins.include?(instance.metadata.name)
         plugins << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,
-          status: PluginGuard::Status.status[:compatible]
+          status: status[:compatible]
         }
       end
     end
 
-    Plugin::Instance.find_all("#{PluginGuard.root_dir}#{PluginGuard.incompatible_dir}").each do |instance|
+    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.incompatible_dir}").each do |instance|
       if PluginGuard::Registration.registrable_plugins.include?(instance.metadata.name)
         plugins << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,
-          status: PluginGuard::Status.status[:incompatible]
+          status: status[:incompatible]
         }
       end
     end
 
-    update(plugins)
+    plugins
   end
 end

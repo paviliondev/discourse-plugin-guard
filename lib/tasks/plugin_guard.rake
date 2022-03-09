@@ -66,8 +66,11 @@ task "plugin_guard:update_statuses" => [:environment] do |_, args|
     exit 1
   end
 
-  unless PluginGuard::Status.update_all
-    puts PluginGuard::Status.errors.join(', ')
+  plugins = PluginGuard::Status.all_plugins
+  status = PluginGuard::Status.new(plugins)
+
+  unless status.update
+    puts status.errors.full_messages.join(", ")
     exit 1
   end
 

@@ -33,7 +33,8 @@ class PluginGuard::Store
         plugins.push(plugin)
       end
 
-      PluginGuard::Status.update(plugins)
+      status = PluginGuard::Status.new(plugins)
+      status.update
 
       clear
     end
