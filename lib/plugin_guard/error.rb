@@ -20,10 +20,13 @@ class ::PluginGuard::Error < StandardError
 
   def self.extract_plugin_path(e)
     e.backtrace_locations.lazy.map do |location|
-      Pathname.new(location.absolute_path)
-        .ascend
-        .lazy
-        .find { |path| path.parent.to_s == (::PluginGuard.root_dir + ::PluginGuard.compatible_dir).to_s }
+      path = Pathname.new(location.absolute_path).ascend
+      next if path.blank?
+      path.lazy.find { |path| path.parent.to_s == plugin_dir }
     end.next
+  end
+
+  def self.plugin_dir
+    (::PluginGuard.root_dir + ::PluginGuard.compatible_dir).to_s
   end
 end
