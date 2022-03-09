@@ -75,7 +75,7 @@ class PluginGuard::Registration
 
         if data[:success] == "OK"
           set(updated_at: data[:updated_at], plugins: data[:plugins])
-          return true
+          true
         end
       end
     else

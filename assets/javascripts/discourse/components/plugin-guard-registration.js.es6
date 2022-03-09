@@ -1,7 +1,7 @@
 import Component from "@ember/component";
 import discourseComputed from "discourse-common/utils/decorators";
 import PluginGuard from "../models/plugin-guard";
-import { and, equal, readOnly, not } from "@ember/object/computed";
+import { and, equal, not, readOnly } from "@ember/object/computed";
 
 export default Component.extend({
   classNames: ["plugin-guard-registration"],
