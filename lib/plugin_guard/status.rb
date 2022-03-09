@@ -21,11 +21,11 @@ class ::PluginGuard::Status
   end
 
   def registered_plugins
-    plugins.select { |plugin| registration.plugins.include?(plugin[:name]) }
+    @plugins.select { |plugin| registration.plugins.include?(plugin[:name]) }
   end
 
   def fill_git_data
-    @plugins = plugins.reduce([]) do |result, plugin|
+    @plugins.reduce([]) do |result, plugin|
       if plugin[:directory].present?
         sha = PluginGuard.run_shell_cmd('git rev-parse HEAD', chdir: plugin[:directory])
         branch = PluginGuard.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: plugin[:directory])
@@ -41,13 +41,14 @@ class ::PluginGuard::Status
 
   def update
     add_error("Registration is not active.") unless registration.active?
-    add_error("No registered plugins.") unless plugins.any?
-
     return false if errors.any?
 
-    fill_git_data
-    add_error("Failed to add git data to plugins.") unless plugins.any?
+    @plugins = registered_plugins
+    add_error("No registered plugins.") unless @plugins.any?
+    return false if errors.any?
 
+    @plugins = fill_git_data
+    add_error("Failed to add git data to plugins.") unless @plugins.any?
     return false if errors.any?
 
     header_key = registration.authorization.user_key? ? "User-Api-Key" : "Api-Key"
@@ -58,7 +59,7 @@ class ::PluginGuard::Status
       },
       body: {
         domain: PluginGuard.client_domain,
-        plugins: plugins,
+        plugins: @plugins,
         discourse: {
           branch: Discourse.git_branch,
           sha: Discourse.git_version
