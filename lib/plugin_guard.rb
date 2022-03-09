@@ -34,16 +34,20 @@ class ::PluginGuard
     Rails.env.test? ? "#{Rails.root}/plugins/discourse-plugin-guard/spec/fixtures/" : Rails.root
   end
 
+  def self.development?
+    Rails.env.development? && !ENV["DISCOURSE_DEV_PLUGIN_GUARD_PRODUCTION_SERVER"]
+  end
+
   def self.client_domain
-    Rails.env.development? ? "localhost:4200" : Discourse.current_hostname
+    development? ? "localhost:4200" : Discourse.current_hostname
   end
 
   def self.server_domain
-    Rails.env.development? ? "localhost:4200" : "plugins.discourse.pavilion.tech"
+    development? ? "localhost:4200" : "plugins.discourse.pavilion.tech"
   end
 
   def self.protocol
-    Rails.env.development? ? "http" : "https"
+    development? ? "http" : "https"
   end
 
   def self.server_url

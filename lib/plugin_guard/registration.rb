@@ -45,7 +45,7 @@ class PluginGuard::Registration
     PluginStore.remove(PluginGuard::NAMESPACE, registration_db_key)
   end
 
-  def self.update
+  def self.update!
     auth = PluginGuard::Authorization.get
 
     unless auth.active?

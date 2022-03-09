@@ -1,12 +1,13 @@
 import Component from "@ember/component";
 import discourseComputed from "discourse-common/utils/decorators";
 import PluginGuard from "../models/plugin-guard";
-import { and, equal, readOnly } from "@ember/object/computed";
+import { and, equal, readOnly, not } from "@ember/object/computed";
 
 export default Component.extend({
   classNames: ["plugin-guard-registration"],
   registered: equal("registration.status", "registered"),
-  canUnregister: and("registered", "registration.updated_at"),
+  userKey: not("registration.site_key"),
+  canUnregister: and("registered", "userKey"),
 
   @discourseComputed("registered")
   btnClass(registered) {

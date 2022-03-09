@@ -19,7 +19,7 @@ class PluginGuard::AuthorizationController < ::Admin::AdminController
     request_id = cookies[:user_api_request_id]
 
     if authorization.handle_callback(request_id, payload)
-      PluginGuard::Registration.update
+      PluginGuard::Registration.update!
     end
 
     redirect_to '/admin/plugins'

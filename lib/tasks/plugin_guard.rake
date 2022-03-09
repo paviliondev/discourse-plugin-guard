@@ -58,3 +58,19 @@ task 'assets:precompile:before' do
     end
   end
 end
+
+task "plugin_guard:update_statuses" => [:environment] do |_, args|
+  api_key = SiteSetting.plugin_manager_api_key
+  unless api_key.present?
+    puts "ERROR: `plugin_manager_api_key` site setting is not set"
+    exit 1
+  end
+
+  unless PluginGuard::Status.update_all
+    puts PluginGuard::Status.errors.join(', ')
+    exit 1
+  end
+
+  puts "SUCCESS: Updated all registered plugins."
+  exit 0
+end

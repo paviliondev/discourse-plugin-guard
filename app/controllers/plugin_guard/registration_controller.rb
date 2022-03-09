@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PluginGuard::RegistrationController < Admin::AdminController
-  def index
+  def show
     render_serialized(registration, PluginGuard::RegistrationSerializer)
   end
 
