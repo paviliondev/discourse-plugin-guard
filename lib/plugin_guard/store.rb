@@ -17,4 +17,25 @@ class PluginGuard::Store
   def self.clear
     @cache = {}
   end
+
+  def self.process
+    if all.present?
+      plugins = []
+
+      all.each do |name, data|
+        plugin = {
+          plugin: name,
+          directory: data[:directory],
+          status: data[:status]
+        }
+        plugin[:message] = data[:message] if data[:message].present?
+        plugin[:backtrace] = data[:backtrace] if data[:message].present?
+        plugins.push(plugin)
+      end
+
+      PluginGuard::Status.update(plugins, registration)
+
+      clear
+    end
+  end
 end

@@ -8,8 +8,10 @@ class ::PluginGuard::Error < StandardError
   end
 
   def self.handle(e)
-    plugin_path = extract_plugin_path(e)
-    raise new(e) unless plugin_path || plugin_path.include?("discourse-plugin-manager")
+    plugin_path = extract_plugin_path(e).to_s
+    unless plugin_path.present? && plugin_path.exclude?("discourse-plugin-manager")
+      raise new(e)
+    end
 
     if guard = ::PluginGuard.new(plugin_path)
       guard.handle(message: e.message, backtrace: e.backtrace.join($/))
@@ -23,7 +25,7 @@ class ::PluginGuard::Error < StandardError
       Pathname.new(location.absolute_path)
         .ascend
         .lazy
-        .find { |path| path.parent == (::PluginGuard.root_dir + ::PluginGuard.compatible_dir) }
+        .find { |path| path.parent.to_s == (::PluginGuard.root_dir + ::PluginGuard.compatible_dir).to_s }
     end.next
   end
 end

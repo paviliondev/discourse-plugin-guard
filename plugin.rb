@@ -37,7 +37,8 @@ after_initialize do
 
   if SiteSetting.plugin_manager_api_key.present?
     PluginGuard::Authorization.set_site_api_key(SiteSetting.plugin_manager_api_key)
+    PluginGuard::Registration.update
   end
 
-  PluginGuard::Status.handle_startup_errors
+  PluginGuard::Store.process
 end

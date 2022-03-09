@@ -15,6 +15,9 @@ module ::PluginGuard::PluginInstanceExtension
         ::PluginGuard::Error.handle(error)
         next
       end
+
+      ## End of plugin initialization cycle
+      PluginGuard::Store.set(name, status: PluginGuard::Status.status[:compatible])
     end
   end
 end

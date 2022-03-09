@@ -101,18 +101,13 @@ class PluginGuard::Authorization
     get
   end
 
-  def self.set_site_api_key(key)
-    valid = validate_site_api_key(key)
-    return false if !valid
+  def self.set_site_api_key(key, validate: true)
+    return false if validate && !validate_site_api_key(key)
 
     PluginStore.set(PluginGuard::NAMESPACE, authorization_db_key,
       key: key,
       user_key: false,
       auth_at: nil
-    )
-
-    PluginGuard::Registration.set(
-      plugins: PluginGuard::Registration.registrable_plugins
     )
   end
 

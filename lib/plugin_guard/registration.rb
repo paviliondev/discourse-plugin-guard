@@ -48,7 +48,12 @@ class PluginGuard::Registration
   def self.update
     auth = PluginGuard::Authorization.get
 
-    if auth.active? && auth.user_key?
+    unless auth.active?
+      set(updated_at: nil)
+      return false
+    end
+
+    if auth.user_key?
       url = "#{::PluginGuard.server_url}/plugin-manager/user/register"
       response = Excon.post(url,
         headers: {
@@ -73,13 +78,19 @@ class PluginGuard::Registration
           return true
         end
       end
+    else
+      set(updated_at: Time.now.iso8601(3), plugins: registrable_plugins)
     end
-
-    set(updated_at: nil)
-    false
   end
 
   def self.registrable_plugins
-    ::Discourse.unofficial_plugins.map(&:name)
+    ::Discourse.unofficial_plugins.map(&:name).select { |name| excluded_plugins.exclude?(name) }
+  end
+
+  def self.excluded_plugins
+    %w(
+      discourse-plugin-manager
+      discourse-plugin-guard
+    )
   end
 end

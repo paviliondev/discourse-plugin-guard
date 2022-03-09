@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ::PluginGuard::Handler
-  attr_reader :plugin_name,
-              :plugin_dir
+  attr_reader :plugin_name
+  attr_accessor :plugin_dir
 
   def initialize(plugin_name, plugin_dir)
     @plugin_name = plugin_name.to_s
@@ -44,20 +44,27 @@ class ::PluginGuard::Handler
   end
 
   def move_to_incompatible
-    move_to(PluginGuard.incompatible_dir)
+    move(PluginGuard.compatible_dir, PluginGuard.incompatible_dir)
   end
 
   def store_error(message, backtrace)
-    PluginGuard::Store.set(@plugin_name, message: message, backtrace: backtrace)
+    PluginGuard::Store.set(
+      @plugin_name,
+      directory: @plugin_dir,
+      status: PluginGuard::Status.status[:incompatible],
+      message: message,
+      backtrace: backtrace
+    )
   end
 
   protected
 
-  def move_to(dir)
+  def move(from_dir, to_dir)
     dup_plugin_dir = plugin_dir.dup
     return unless File.exists?(dup_plugin_dir)
-    move_to_dir = dup_plugin_dir.reverse.sub(PluginGuard.compatible_dir.reverse, dir.reverse).reverse
+    move_to_dir = dup_plugin_dir.reverse.sub(from_dir.reverse, to_dir.reverse).reverse
     FileUtils.mv(plugin_dir, move_to_dir, force: true)
+    @plugin_dir = move_to_dir
   end
 
   def clean_up_assets

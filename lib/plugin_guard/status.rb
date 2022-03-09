@@ -1,47 +1,62 @@
 # frozen_string_literal: true
 
 class ::PluginGuard::Status
-  def self.handle_startup_errors
-    startup_errors = PluginGuard::Store.all
-    if startup_errors.present?
-      registration = PluginGuard::Registration.get
+  def self.status
+    Enum.new(
+      unknown: 0,
+      compatible: 1,
+      incompatible: 2
+    )
+  end
 
-      if registration.active?
-        plugin_status_changes = []
+  def self.get_sha(plugin_dir)
+    PluginGuard.run_shell_cmd('git rev-parse HEAD', chdir: plugin_dir)
+  end
 
-        startup_errors.each do |name, data|
-          plugin_status_changes.push(
-            plugin: name,
-            status: 2, ## incompatible
-            message: data[:message],
-            backtrace: data[:backtrace]
-          )
-          registration.plugins.include?(plugin_name)
+  def self.get_branch(plugin_dir)
+    PluginGuard.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: plugin_dir)
+  end
+
+  def self.fill_git_data(plugins)
+    plugins.reduce([]) do |result, plugin|
+      if plugin[:directory].present?
+        sha = get_sha(plugin[:directory])
+        branch = get_branch(plugin[:directory])
+
+        if sha.present? && branch.present?
+          result << plugin.except(:directory).merge(sha: sha, branch: branch)
         end
-
-        update(plugin_status_changes)
       end
 
-      PluginGuard::Store.clear
+      result
     end
   end
 
-  def self.update(plugin_status_changes)
-    registration = ::PluginGuard::Registration.get
+  def self.update(plugins)
+    registration = PluginGuard::Registration.get
     return false unless registration.active?
 
-    user_key = registration.authorization.user_key?
-    header_key = user_key ? "User-Api-Key" : "Api-Key"
-    url = "#{PluginGuard.server_url}/status"
+    plugins = plugins.select { |plugin| registration.plugins.include?(plugin[:name]) }
+    return false unless plugins.any?
 
-    response = Excon.post(url,
+    plugins = fill_git_data(plugins)
+    return false unless plugins.any?
+
+    header_key = registration.authorization.user_key? ? "User-Api-Key" : "Api-Key"
+
+    response = Excon.post("#{PluginGuard.server_url}/plugin-manager/status",
       headers: {
-        "#{header_key}" => registration.api_key
+        "#{header_key}" => registration.authorization.api_key,
+        "Content-Type" => "application/json"
       },
       body: {
         domain: PluginGuard.client_domain,
-        plugins: plugin_status_changes
-      }
+        plugins: plugins,
+        discourse: {
+          branch: Discourse.git_branch,
+          sha: Discourse.git_version
+        }
+      }.to_json
     )
 
     return false unless response.status == 200

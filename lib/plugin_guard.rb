@@ -31,7 +31,7 @@ class ::PluginGuard
   end
 
   def self.root_dir
-    Rails.root
+    Rails.env.test? ? "#{Rails.root}/plugins/discourse-plugin-guard/spec/fixtures/" : Rails.root
   end
 
   def self.client_domain
@@ -53,8 +53,14 @@ class ::PluginGuard
   def self.client_url
     "#{PluginGuard.protocol}://#{PluginGuard.client_domain}"
   end
+
+  def self.run_shell_cmd(cmd, opts = {})
+    stdout, stderr_str, status = Open3.capture3(cmd, opts)
+    stderr_str.present? ? nil : stdout.strip
+  end
 end
 
 require_relative 'plugin_guard/error.rb'
 require_relative 'plugin_guard/handler.rb'
 require_relative 'plugin_guard/store.rb'
+require_relative 'plugin_guard/status.rb'

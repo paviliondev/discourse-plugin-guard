@@ -19,4 +19,13 @@ def guard_plugin_dir(name, compatible: true)
   "#{guard_fixture_dir}/#{plugins_dir}/#{name}"
 end
 
+def load_plugin(plugin_dir)
+  path = "#{plugin_dir}/plugin.rb"
+  source = File.read(path)
+  metadata = Plugin::Metadata.parse(source)
+  plugin = Plugin::Instance.new(metadata, path)
+  Discourse.plugins << plugin
+  plugin
+end
+
 require 'rails_helper'
