@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ::PluginGuard::PluginInstanceExtension
+module PluginGuard::PluginInstanceExtension
   def notify_after_initialize
     color_schemes.each do |c|
       unless ColorScheme.where(name: c[:name]).exists?
@@ -12,7 +12,7 @@ module ::PluginGuard::PluginInstanceExtension
       begin
         callback.call(self)
       rescue => error
-        ::PluginGuard::Error.handle(error)
+        PluginGuard::Error.handle(error)
         next
       end
 

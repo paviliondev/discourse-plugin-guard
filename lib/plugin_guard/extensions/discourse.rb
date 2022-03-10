@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ::PluginGuard::DiscourseExtension
+module PluginGuard::DiscourseExtension
   def activate_plugins!
     @plugins = []
 
@@ -10,7 +10,7 @@ module ::PluginGuard::DiscourseExtension
 
       unless Discourse.has_needed_version?(Discourse::VERSION::STRING, version)
         directory = File.dirname(plugin_instance.path)
-        guard = ::PluginGuard.new(directory)
+        guard = PluginGuard.new(directory)
         message = "Could not activate #{plugin_name}, discourse does not meet required version (#{version})"
         guard.handle(message: message)
         next
@@ -19,7 +19,7 @@ module ::PluginGuard::DiscourseExtension
       begin
         plugin_instance.activate!
       rescue => error
-        ::PluginGuard::Error.handle(error)
+        PluginGuard::Error.handle(error)
         next
       end
 
