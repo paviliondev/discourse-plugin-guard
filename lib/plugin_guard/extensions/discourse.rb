@@ -25,7 +25,5 @@ module PluginGuard::DiscourseExtension
 
       @plugins << plugin_instance
     end
-
-    ::DiscourseEvent.trigger(:after_plugin_activation)
   end
 end
