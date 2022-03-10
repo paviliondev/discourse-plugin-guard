@@ -8,7 +8,7 @@ class ::PluginGuard::Error < StandardError
   end
 
   def self.handle(e)
-    plugin_path = extract_plugin_path(e).to_s
+    plugin_path = extract_plugin_path(e)
     raise new(e) unless plugin_path.present?
 
     if guard = ::PluginGuard.new(plugin_path)
@@ -20,10 +20,22 @@ class ::PluginGuard::Error < StandardError
 
   def self.extract_plugin_path(e)
     plugin_path = ""
-    return plugin_path unless e.backtrace_locations.present?
+    locations = []
 
-    e.backtrace_locations.each do |location|
-      paths = Pathname.new(location.absolute_path).ascend
+    if e.backtrace_locations.present?
+      locations = e.backtrace_locations.map do |l|
+        l.respond_to?(:absolute_path) ? l.absolute_path : nil
+      end.compact
+    end
+
+    if locations.blank?
+      locations = e.backtrace.map { |b| b[/.*\//] }.compact
+    end
+
+    return plugin_path unless locations.present?
+
+    locations.each do |location|
+      paths = Pathname.new(location).ascend
 
       if paths
         path = paths.find { |p| p.parent.to_s == plugin_dir }
@@ -31,7 +43,7 @@ class ::PluginGuard::Error < StandardError
       end
     end
 
-    plugin_path
+    plugin_path.to_s.chomp('/')
   end
 
   def self.plugin_dir

@@ -83,7 +83,7 @@ class ::PluginGuard::Status
   end
 
   def self.status
-    Enum.new(
+    Hash.new(
       unknown: 0,
       compatible: 1,
       incompatible: 2
