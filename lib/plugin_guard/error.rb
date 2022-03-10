@@ -7,29 +7,40 @@ class ::PluginGuard::Error < StandardError
     @error = error
   end
 
-  def self.handle(e)
-    plugin_path = extract_plugin_path(e)
-    raise new(e) unless plugin_path.present?
+  def self.handle(error)
+    plugin_path = extract_plugin_path(error)
+
+    unless plugin_path.present?
+
+      STDERR.puts <<~TEXT
+        ** THE PLUGIN GUARD HAS CAUGHT AN ERROR, BUT CAN'T IDENTIFY THE SOURCE. **
+        One of your plugins has an error. The plugin guard caught it, but can't
+        tell where it's from. This is all we know at the moment:
+        #{map_stack_trace(error)}
+      TEXT
+
+      exit 1
+    end
 
     if guard = ::PluginGuard.new(plugin_path)
-      guard.handle(message: e.message, backtrace: e.backtrace.join($/))
+      guard.handle(message: error.message, backtrace: error.backtrace.join($/))
     else
-      raise new(e)
+      raise new(error)
     end
   end
 
-  def self.extract_plugin_path(e)
+  def self.extract_plugin_path(error)
     plugin_path = ""
     locations = []
 
-    if e.backtrace_locations.present?
-      locations = e.backtrace_locations.map do |l|
-        l.respond_to?(:absolute_path) ? l.absolute_path : nil
+    if error.backtrace_locations.present?
+      locations = error.backtrace_locations.map do |location|
+        location.respond_to?(:absolute_path) ? location.absolute_path : nil
       end.compact
     end
 
     if locations.blank?
-      locations = e.backtrace.map { |b| b[/.*\//] }.compact
+      locations = error.backtrace.map { |trace| trace[/.*\//] }.compact
     end
 
     return plugin_path unless locations.present?
@@ -48,5 +59,15 @@ class ::PluginGuard::Error < StandardError
 
   def self.plugin_dir
     (::PluginGuard.root_dir + ::PluginGuard.compatible_dir).to_s
+  end
+
+  def self.map_stack_trace(error)
+    error.backtrace.each_with_index.inject([]) do |messages, (line, index)|
+      if index == 0
+        messages << "#{line}: #{error} (#{error.class})"
+      else
+        messages << "\t#{index}: from #{line}"
+      end
+    end.reverse.join("\n")
   end
 end
