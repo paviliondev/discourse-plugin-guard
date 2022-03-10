@@ -16,7 +16,7 @@ describe PluginGuard::Status do
   let(:plugin_branch) { "main" }
   let(:discourse_url) { "https://github.com/discourse/discourse" }
   let(:discourse_sha) { "eb2e3b510de9295d1ed91919d2df0dc800364689" }
-  let(:discourse_branch) { "main" }
+  let(:discourse_branch) { "tests-passed" }
 
   before do
     api_key = ApiKey.create!(user_id: user.id, created_by_id: -1)
