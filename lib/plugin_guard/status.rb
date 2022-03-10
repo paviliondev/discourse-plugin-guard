@@ -83,11 +83,11 @@ class ::PluginGuard::Status
   end
 
   def self.status
-    Hash.new(
+    @status ||= {
       unknown: 0,
       compatible: 1,
       incompatible: 2
-    )
+    }
   end
 
   def self.all_plugins
