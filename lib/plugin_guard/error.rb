@@ -20,6 +20,7 @@ class ::PluginGuard::Error < StandardError
 
   def self.extract_plugin_path(e)
     plugin_path = ""
+    return plugin_path unless e.backtrace_locations.present?
 
     e.backtrace_locations.each do |location|
       paths = Pathname.new(location.absolute_path).ascend
