@@ -6,6 +6,8 @@ export default {
   initialize() {
     withPluginApi("1.1.0", (api) => {
       api.modifyClass("route:admin-plugins", {
+        pluginId: "plugin-guard",
+
         afterModel() {
           return PluginGuard.registration().then((result) => {
             this.set("pluginGuard", PluginGuard.create(result));
