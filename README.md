@@ -36,6 +36,8 @@ As well as being deployed on client sites, this plugin is deployed on the follow
 - `tests-passed.plugins.discourse.pavilion.tech`
 - `stable.plugins.discourse.pavilion.tech`
 
+If you need to deploy updates to the plugin guard ssh into the relevant server and run ``discourse_update`` (see ``bin/update.sh``).
+
 ### Scheduled Rebuilds
 
 The canary servers running this plugin use ``crontab`` to automatically rebuild every 12 hours, and automatically cleanup docker containers every Monday, Wednesday and Friday.
@@ -43,11 +45,11 @@ The canary servers running this plugin use ``crontab`` to automatically rebuild 
 The cron jobs on both servers are
 
 ```
-0 00 * * * /usr/local/bin/rebuild_discourse >>/tmp/cron_debug_log.log 2>&1
-0 00 * * 1,3,5 /usr/local/bin/cleanup_discourse >>/tmp/cron_debug_log.log 2>&1
+0 00 * * * /usr/local/bin/discourse_rebuild >>/tmp/cron_debug_log.log 2>&1
+0 00 * * 1,3,5 /usr/local/bin/discourse_cleanup >>/tmp/cron_debug_log.log 2>&1
 ```
 
-The templates for ``rebuild_discourse`` and ``cleanup_discourse`` are ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
+The templates for ``discourse_rebuild`` and ``discourse_cleanup`` are ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
 
 ### External Monitoring
 
