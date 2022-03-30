@@ -15,7 +15,7 @@ def plugin_initialization_guard(&block)
 
   begin
     block.call
-  rescue => error
+  rescue StandardError, ScriptError => error
     PluginGuard::Error.handle(error)
   end
 end

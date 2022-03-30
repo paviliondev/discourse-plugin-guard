@@ -11,7 +11,7 @@ module PluginGuard::PluginInstanceExtension
     initializers.each do |callback|
       begin
         callback.call(self)
-      rescue => error
+      rescue StandardError, ScriptError => error
         PluginGuard::Error.handle(error)
         next
       end
