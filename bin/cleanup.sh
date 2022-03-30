@@ -1,4 +1,3 @@
 #!/bin/sh
-  
-cd /var/discourse
-yes | ./launcher cleanup
+
+/var/discourse/launcher cleanup

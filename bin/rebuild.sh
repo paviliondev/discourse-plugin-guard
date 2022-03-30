@@ -1,4 +1,3 @@
 #!/bin/sh
-  
-cd /var/discourse
-yes | ./launcher rebuild app
+
+/var/discourse/launcher rebuild app
