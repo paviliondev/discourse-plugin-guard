@@ -7,8 +7,8 @@ class ::PluginGuard::Error < StandardError
     @error = error
   end
 
-  def self.handle(error)
-    plugin_path = extract_plugin_path(error)
+  def self.handle(error, plugin_path = nil)
+    plugin_path = extract_plugin_path(error) if !plugin_path
 
     unless plugin_path.present?
 
