@@ -26,7 +26,7 @@ module PluginGuard::DiscourseExtension
       validator = PluginGuard::Validator.new(plugin_name)
       begin
         validator.validate_assets(plugin_instance)
-      rescue StandardError, ScriptError => error
+      rescue ValidatorError => error
         PluginGuard::Error.handle(error)
         next
       end
