@@ -18,7 +18,15 @@ module PluginGuard::DiscourseExtension
 
       begin
         plugin_instance.activate!
-      rescue => error
+      rescue StandardError, ScriptError => error
+        PluginGuard::Error.handle(error)
+        next
+      end
+
+      validator = PluginGuard::Validator.new(plugin_name)
+      begin
+        validator.validate_assets(plugin_instance)
+      rescue StandardError, ScriptError => error
         PluginGuard::Error.handle(error)
         next
       end
