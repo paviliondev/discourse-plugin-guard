@@ -39,7 +39,7 @@ class PluginGuard::Store
       if status.errors.any?
         Rails.logger.error "PluginGuard::Status.update failed. Errors: #{status.errors.full_messages.join("; ")}"
       else
-        Rails.logger.info "PluginGuard::Status.update succeeded. Reported #{plugin_status.map { |ps| "#{ps[:name]}: #{ps[:status]}; " }}"
+        Rails.logger.info "PluginGuard::Status.update succeeded. Reported #{plugin_statuses.map { |ps| "#{ps[:name]}: #{ps[:status]}; " }}"
       end
 
       clear
