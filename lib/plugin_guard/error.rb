@@ -11,7 +11,6 @@ class ::PluginGuard::Error < StandardError
     plugin_path = extract_plugin_path(error) if !plugin_path
 
     unless plugin_path.present?
-
       STDERR.puts <<~TEXT
         ** THE PLUGIN GUARD HAS CAUGHT AN ERROR, BUT CAN'T IDENTIFY THE SOURCE. **
         One of your plugins has an error. The plugin guard caught it, but can't
@@ -22,10 +21,12 @@ class ::PluginGuard::Error < StandardError
       exit 1
     end
 
-    if guard = ::PluginGuard.new(plugin_path)
+    guard = ::PluginGuard.new(plugin_path)
+
+    if guard.present?
       guard.handle(message: error.message, backtrace: error.backtrace.join($/))
     else
-      raise new(error)
+      raise error
     end
   end
 

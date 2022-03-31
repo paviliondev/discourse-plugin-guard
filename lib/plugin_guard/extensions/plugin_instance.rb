@@ -16,8 +16,10 @@ module PluginGuard::PluginInstanceExtension
         next
       end
 
-      ## Report compatible status at the end of the plugin initialization cycle.
-      PluginGuard::Store.set(name, status: PluginGuard::Status.status[:compatible])
+      unless name === "discourse-plugin-guard"
+        ## Report compatible status at the end of the plugin initialization cycle.
+        PluginGuard::Store.set(name, status: PluginGuard::Status.status[:compatible])
+      end
     end
   end
 end

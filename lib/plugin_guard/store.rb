@@ -1,39 +1,39 @@
 # frozen_string_literal: true
 class PluginGuard::Store
-  @cache = {}
+  KEY = "plugin-guard-store"
 
   def self.set(plugin_name, attrs)
-    @cache[plugin_name] = attrs
-  end
-
-  def self.get(plugin_name)
-    @cache[plugin_name]
-  end
-
-  def self.all
-    @cache
+    Discourse.redis.set("#{KEY}:#{plugin_name}", attrs.to_json)
   end
 
   def self.clear
-    @cache = {}
+    Discourse.redis.scan_each(match: "#{KEY}:*").each { |key| Discourse.redis.del(key) }
   end
 
   def self.process
-    if all.present?
-      plugins = []
+    plugins = {}
 
-      all.each do |name, data|
-        plugin = {
+    Discourse.redis.scan_each(match: "#{KEY}:*") do |key|
+      content = Discourse.redis.get(key)
+      next unless content.present?
+      plugins[key.split("#{KEY}-").last] = JSON.parse(content).symbolize_keys
+    end
+
+    if plugins.present?
+      statuses = []
+
+      plugins.each do |name, data|
+        status = {
           plugin: name,
           directory: data[:directory],
           status: data[:status]
         }
-        plugin[:message] = data[:message] if data[:message].present?
-        plugin[:backtrace] = data[:backtrace] if data[:message].present?
-        plugins.push(plugin)
+        status[:message] = data[:message] if data[:message].present?
+        status[:backtrace] = data[:backtrace] if data[:message].present?
+        statuses.push(status)
       end
 
-      status = PluginGuard::Status.new(plugins)
+      status = PluginGuard::Status.new(statuses)
       status.update
 
       if status.errors.any?
