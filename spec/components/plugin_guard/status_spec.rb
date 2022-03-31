@@ -19,8 +19,7 @@ describe PluginGuard::Status do
   let(:discourse_branch) { "tests-passed" }
 
   before do
-    api_key = ApiKey.create!(user_id: user.id, created_by_id: -1)
-    SiteSetting.plugin_manager_api_key = api_key
+    SiteSetting.plugin_manager_api_key = "123456"
   end
 
   def request_headers
@@ -63,7 +62,7 @@ describe PluginGuard::Status do
       }
     }
 
-    stub_request(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
+    stub_request(:post, "#{PluginGuard.server_url}/plugin-manager/status.json").with(
       body: request_body.to_json,
       headers: request_headers
     ).to_return(
@@ -84,7 +83,7 @@ describe PluginGuard::Status do
     status = described_class.new(plugins)
     status.update
 
-    expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
+    expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status.json").with(
       headers: request_headers,
       body: request_body.to_json
     )
@@ -137,7 +136,7 @@ describe PluginGuard::Status do
       }
     }
 
-    stub_request(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
+    stub_request(:post, "#{PluginGuard.server_url}/plugin-manager/status.json").with(
       body: request_body.to_json,
       headers: request_headers
     ).to_return(
@@ -150,7 +149,7 @@ describe PluginGuard::Status do
     status = described_class.new(plugins)
     status.update
 
-    expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status").with(
+    expect(WebMock).to have_requested(:post, "#{PluginGuard.server_url}/plugin-manager/status.json").with(
       headers: request_headers,
       body: request_body.to_json
     )

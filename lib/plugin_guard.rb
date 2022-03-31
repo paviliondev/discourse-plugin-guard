@@ -30,6 +30,14 @@ class ::PluginGuard
     'plugins_incompatible'
   end
 
+  def self.compatible_plugins
+    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.compatible_dir}")
+  end
+
+  def self.incompatible_plugins
+    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.incompatible_dir}")
+  end
+
   def self.root_dir
     Rails.env.test? ? "#{Rails.root}/plugins/discourse-plugin-guard/spec/fixtures/" : Rails.root
   end
@@ -39,11 +47,11 @@ class ::PluginGuard
   end
 
   def self.client_domain
-    development? ? "localhost:4200" : Discourse.current_hostname
+    development? ? "localhost:3000" : Discourse.current_hostname
   end
 
   def self.server_domain
-    development? ? "localhost:4200" : "plugins.discourse.pavilion.tech"
+    development? ? "localhost:3000" : "plugins.discourse.pavilion.tech"
   end
 
   def self.protocol

@@ -52,7 +52,7 @@ class ::PluginGuard::Status
     return false if errors.any?
 
     header_key = registration.authorization.user_key? ? "User-Api-Key" : "Api-Key"
-    response = Excon.post("#{PluginGuard.server_url}/plugin-manager/status",
+    response = Excon.post("#{PluginGuard.server_url}/plugin-manager/status.json",
       headers: {
         "#{header_key}" => registration.authorization.api_key,
         "Content-Type" => "application/json"
@@ -93,8 +93,8 @@ class ::PluginGuard::Status
   def self.all_plugins
     plugins = []
 
-    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.compatible_dir}").each do |instance|
-      if PluginGuard::Registration.registrable_plugins.include?(instance.metadata.name)
+    PluginGuard.compatible_plugins.each do |instance|
+      if PluginGuard::Registration.excluded_plugins.exclude?(instance.metadata.name)
         plugins << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,
@@ -103,8 +103,8 @@ class ::PluginGuard::Status
       end
     end
 
-    Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.incompatible_dir}").each do |instance|
-      if PluginGuard::Registration.registrable_plugins.include?(instance.metadata.name)
+    PluginGuard.incompatible_plugins.each do |instance|
+      if PluginGuard::Registration.excluded_plugins.exclude?(instance.metadata.name)
         plugins << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,

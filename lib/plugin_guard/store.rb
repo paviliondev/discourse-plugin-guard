@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class PluginGuard::Store
-  KEY = "plugin-guard-store"
+  KEY ||= "plugin-guard-store"
 
   def self.set(plugin_name, attrs)
     Discourse.redis.set("#{KEY}:#{plugin_name}", attrs.to_json)
@@ -16,24 +16,24 @@ class PluginGuard::Store
     Discourse.redis.scan_each(match: "#{KEY}:*") do |key|
       content = Discourse.redis.get(key)
       next unless content.present?
-      plugins[key.split("#{KEY}-").last] = JSON.parse(content).symbolize_keys
+      plugins[key.split("#{KEY}:").last] = JSON.parse(content).symbolize_keys
     end
 
     if plugins.present?
-      statuses = []
+      plugin_statuses = []
 
       plugins.each do |name, data|
-        status = {
-          plugin: name,
+        plugin_status = {
+          name: name,
           directory: data[:directory],
           status: data[:status]
         }
-        status[:message] = data[:message] if data[:message].present?
-        status[:backtrace] = data[:backtrace] if data[:message].present?
-        statuses.push(status)
+        plugin_status[:message] = data[:message] if data[:message].present?
+        plugin_status[:backtrace] = data[:backtrace] if data[:message].present?
+        plugin_statuses.push(plugin_status)
       end
 
-      status = PluginGuard::Status.new(statuses)
+      status = PluginGuard::Status.new(plugin_statuses)
       status.update
 
       if status.errors.any?

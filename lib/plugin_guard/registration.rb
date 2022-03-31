@@ -11,7 +11,7 @@ class PluginGuard::Registration
   end
 
   def active?
-    authorization.active? && plugins.present? && (
+    authorization.active? && (
       (updated_at && updated_at > 3.days.ago) || ## user registered
       authorization.site_key? ## site registered
     )
@@ -84,7 +84,9 @@ class PluginGuard::Registration
   end
 
   def self.registrable_plugins
-    ::Discourse.unofficial_plugins.map(&:name).select { |name| excluded_plugins.exclude?(name) }
+    compatible = PluginGuard.compatible_plugins.map { |instance| instance.metadata.name }
+    incompatible = PluginGuard.incompatible_plugins.map { |instance| instance.metadata.name }
+    (compatible + incompatible).uniq - excluded_plugins
   end
 
   def self.excluded_plugins
