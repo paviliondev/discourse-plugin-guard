@@ -53,4 +53,4 @@ The templates for ``discourse_rebuild`` and ``discourse_cleanup`` are ``bin/rebu
 
 ### External Monitoring
 
-The cron jobs on the canary servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. If a job does not start, or it fails to complete, then an alert is sent to developers@coop.pavilion.tech and assigned to the relevant developer on duty.
+The cron jobs on the canary servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. If a job does not start, or it fails to complete, then an alert is sent to plugin-guardians@coop.pavilion.tech and assigned to the relevant developer on duty.
