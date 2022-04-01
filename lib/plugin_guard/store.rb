@@ -19,7 +19,7 @@ class PluginGuard::Store
       plugins[key.split("#{KEY}:").last] = JSON.parse(content).symbolize_keys
     end
 
-    if plugins.present?
+    if plugins.present? && database_ready?
       plugin_statuses = []
 
       plugins.each do |name, data|
@@ -44,5 +44,12 @@ class PluginGuard::Store
 
       clear
     end
+  end
+
+  def self.database_ready?
+    ActiveRecord::Base.connection
+    ActiveRecord::Base.connection.data_source_exists? 'plugin_store_rows'
+  rescue ActiveRecord::NoDatabaseError
+    false
   end
 end
