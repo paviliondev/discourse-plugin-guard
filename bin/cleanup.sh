@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 
-/var/discourse/launcher cleanup
+yes | /var/discourse/launcher cleanup
