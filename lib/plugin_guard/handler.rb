@@ -44,7 +44,9 @@ class ::PluginGuard::Handler
   end
 
   def move_to_incompatible
-    move(PluginGuard.compatible_dir, PluginGuard.incompatible_dir)
+    unless plugin_dir.include?(PluginGuard.incompatible_dir)
+      move(PluginGuard.compatible_dir, PluginGuard.incompatible_dir)
+    end
   end
 
   def store_error(message, backtrace)
