@@ -16,7 +16,8 @@ if Rails.env.test?
   ).each do |path|
     load File.expand_path(path, __FILE__)
   end
-  FileUtils.mv('../lib/plugin_initialization_guard.rb', '../../../lib/plugin_initialization_guard.rb', force: true)
+
+  FileUtils.mv('../lib/plugin.rb', '../../../lib/plugin.rb', force: true)
 end
 
 after_initialize do

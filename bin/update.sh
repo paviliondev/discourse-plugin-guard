@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd /var/discourse/shared/standalone/discourse-plugin-guard && git pull
-/var/discourse/launcher rebuild app
+yes | /var/discourse/launcher rebuild app

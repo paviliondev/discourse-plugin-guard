@@ -12,4 +12,4 @@ ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/status.rb ${DISCOURSE_ROOT}/lib/plu
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/store.rb ${DISCOURSE_ROOT}/lib/plugin_guard/store.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/validator.rb ${DISCOURSE_ROOT}/lib/plugin_guard/validator.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/tasks/plugin_guard.rake ${DISCOURSE_ROOT}/lib/tasks/plugin_guard.rake
-ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_initialization_guard.rb ${DISCOURSE_ROOT}/lib/plugin_initialization_guard.rb
+ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin.rb ${DISCOURSE_ROOT}/lib/plugin.rb
