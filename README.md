@@ -6,7 +6,7 @@ Note that this plugin manually overrides files in the Discourse installation its
 
 ### Installation
 
-[tbd]
+[Plugin is not yet ready for deployment on client servers]
 
 ### Development
 
@@ -31,7 +31,7 @@ Use a development workflow that looks like this
 
 ### Deployment on Canary Servers
 
-As well as being deployed on client sites, this plugin is deployed on the following "canary"
+As well as being deployed on client servers, this plugin is deployed on the following "canary" servers:
 
 - `tests-passed.plugins.discourse.pavilion.tech`
 - `stable.plugins.discourse.pavilion.tech`
@@ -40,7 +40,7 @@ If you need to deploy updates to the plugin guard ssh into the relevant server a
 
 ### Scheduled Rebuilds
 
-The canary servers running this plugin use ``crontab`` to automatically rebuild every 12 hours, and automatically cleanup docker containers every Monday, Wednesday and Friday.
+The canary servers running this plugin use ``crontab`` to automatically rebuild and cleanup their docker containers on set schedules.
 
 The cron jobs on both servers are
 
@@ -53,4 +53,4 @@ The templates for ``discourse_rebuild`` and ``discourse_cleanup`` are ``bin/rebu
 
 ### External Monitoring
 
-The cron jobs on the canary servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. If a job does not start, or it fails to complete, then an alert is sent to plugin-guardians@coop.pavilion.tech and assigned to the relevant developer on duty.
+The cron jobs on the canary servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. If a job does not start, or it fails to complete, then an alert is sent to the Plugin Guardian category on the Plugin Manager server and assigned to a Plugin Guardian.
