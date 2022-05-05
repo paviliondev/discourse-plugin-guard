@@ -16,6 +16,6 @@ hooks:
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/validator.rb lib/plugin_guard/validator.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard.rb lib/plugin_guard.rb
           - cp -rf /shared/discourse-plugin-guard/lib/tasks/plugin_guard.rake lib/tasks/plugin_guard.rake
-          - cp -rf /shared/discourse-plugin-guard/lib/plugin_initialization_guard.rb lib/plugin_initialization_guard.rb
+          - cp -rf /shared/discourse-plugin-guard/lib/plugin.rb lib/plugin.rb
           - mkdir -p plugins_incompatible
           - chown -R discourse plugins_incompatible
