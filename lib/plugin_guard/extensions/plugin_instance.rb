@@ -15,15 +15,15 @@ module PluginGuard::PluginInstanceExtension
         PluginGuard::Error.handle(error)
         next
       end
+    end
 
-      unless name === "discourse-plugin-guard"
-        ## Report compatible status at the end of the plugin initialization cycle.
-        PluginGuard::Store.set(
-          name,
-          directory: File.dirname(@path),
-          status: PluginGuard::Status.status[:compatible]
-        )
-      end
+    unless PluginGuard.excluded_plugins.include?(name)
+      ## Report compatible status at the end of the plugin initialization cycle.
+      PluginGuard::Store.set(
+        name,
+        directory: File.dirname(@path),
+        status: PluginGuard::Status.status[:compatible]
+      )
     end
   end
 end

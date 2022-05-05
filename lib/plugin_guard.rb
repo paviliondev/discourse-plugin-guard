@@ -38,6 +38,13 @@ class ::PluginGuard
     Plugin::Instance.find_all("#{PluginGuard.root_dir.to_s.chomp('/')}/#{PluginGuard.incompatible_dir}")
   end
 
+  def self.excluded_plugins
+    %w(
+      discourse-plugin-manager
+      discourse-plugin-guard
+    )
+  end
+
   def self.root_dir
     Rails.env.test? ? "#{Rails.root}/plugins/discourse-plugin-guard/spec/fixtures/" : Rails.root
   end

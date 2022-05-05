@@ -2,48 +2,28 @@
 class PluginGuard::Store
   KEY ||= "plugin-guard-store"
 
-  def self.set(plugin_name, attrs)
-    Discourse.redis.set("#{KEY}:#{plugin_name}", attrs.to_json)
+  def self.get(key)
+    Discourse.redis.get("#{KEY}:#{key}")
+  end
+
+  def self.set(key, attrs)
+    Discourse.redis.set("#{KEY}:#{key}", attrs.to_json)
   end
 
   def self.clear
     Discourse.redis.scan_each(match: "#{KEY}:*").each { |key| Discourse.redis.del(key) }
   end
 
-  def self.process
-    plugins = {}
+  def self.hash
+    result = {}
 
     Discourse.redis.scan_each(match: "#{KEY}:*") do |key|
-      content = Discourse.redis.get(key)
-      next unless content.present?
-      plugins[key.split("#{KEY}:").last] = JSON.parse(content).symbolize_keys
+      value = Discourse.redis.get(key)
+      next unless value.present?
+      result[key.split("#{KEY}:").last] = JSON.parse(value).symbolize_keys
     end
 
-    if plugins.present? && database_ready?
-      plugin_statuses = []
-
-      plugins.each do |name, data|
-        plugin_status = {
-          name: name,
-          directory: data[:directory],
-          status: data[:status]
-        }
-        plugin_status[:message] = data[:message] if data[:message].present?
-        plugin_status[:backtrace] = data[:backtrace] if data[:message].present?
-        plugin_statuses.push(plugin_status)
-      end
-
-      status = PluginGuard::Status.new(plugin_statuses)
-      status.update
-
-      if status.errors.any?
-        Rails.logger.error "PluginGuard::Status.update failed. Errors: #{status.errors.full_messages.join("; ")}"
-      else
-        Rails.logger.info "PluginGuard::Status.update succeeded. Reported #{plugin_statuses.map { |ps| "#{ps[:name]}: #{ps[:status]}; " }}"
-      end
-
-      clear
-    end
+    result
   end
 
   def self.database_ready?

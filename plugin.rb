@@ -41,6 +41,4 @@ after_initialize do
     PluginGuard::Authorization.set_site_api_key(api_key)
     PluginGuard::Registration.update!
   end
-
-  PluginGuard::Store.process
 end

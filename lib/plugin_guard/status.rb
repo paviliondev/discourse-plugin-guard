@@ -90,29 +90,71 @@ class ::PluginGuard::Status
     }
   end
 
-  def self.all_plugins
-    plugins = []
+  def self.update!
+    ## Plugins which threw errors during startup or successfully initialized.
+    plugins = PluginGuard::Store.hash
 
-    PluginGuard.compatible_plugins.each do |instance|
-      if PluginGuard::Registration.excluded_plugins.exclude?(instance.metadata.name)
-        plugins << {
+    ## Plugins that were already in the incompatible directory.
+    incompatible_plugins.each do |data|
+      if plugins[data[:name]].blank?
+        plugins[data[:name]] = data.slice(:directory, :status)
+      end
+    end
+
+    if plugins.present? && PluginGuard::Store.database_ready?
+      plugin_statuses = []
+
+      plugins.each do |name, data|
+        plugin_status = {
+          name: name,
+          directory: data[:directory],
+          status: data[:status]
+        }
+        plugin_status[:message] = data[:message] if data[:message].present?
+        plugin_status[:backtrace] = data[:backtrace] if data[:message].present?
+        plugin_statuses.push(plugin_status)
+      end
+
+      status = self.new(plugin_statuses)
+      status.update
+
+      if status.errors.any?
+        Rails.logger.error "PluginGuard::Status.update failed. Errors: #{status.errors.full_messages.join("; ")}"
+      else
+        Rails.logger.info "PluginGuard::Status.update succeeded. Reported #{plugin_statuses.map { |ps| "#{ps[:name]}: #{ps[:status]}; " }}"
+      end
+
+      PluginGuard::Store.clear
+    end
+  end
+
+  def self.compatible_plugins
+    PluginGuard.compatible_plugins.reduce([]) do |result, instance|
+      if PluginGuard.excluded_plugins.exclude?(instance.metadata.name)
+        result << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,
           status: status[:compatible]
         }
       end
+      result
     end
+  end
 
-    PluginGuard.incompatible_plugins.each do |instance|
-      if PluginGuard::Registration.excluded_plugins.exclude?(instance.metadata.name)
-        plugins << {
+  def self.incompatible_plugins
+    PluginGuard.incompatible_plugins.reduce([]) do |result, instance|
+      if PluginGuard.excluded_plugins.exclude?(instance.metadata.name)
+        result << {
           name: instance.metadata.name,
           directory: File.dirname(instance.path).to_s,
           status: status[:incompatible]
         }
       end
+      result
     end
+  end
 
-    plugins
+  def self.all_plugins
+    compatible_plugins + incompatible_plugins
   end
 end

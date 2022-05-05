@@ -86,13 +86,6 @@ class PluginGuard::Registration
   def self.registrable_plugins
     compatible = PluginGuard.compatible_plugins.map { |instance| instance.metadata.name }
     incompatible = PluginGuard.incompatible_plugins.map { |instance| instance.metadata.name }
-    (compatible + incompatible).uniq - excluded_plugins
-  end
-
-  def self.excluded_plugins
-    %w(
-      discourse-plugin-manager
-      discourse-plugin-guard
-    )
+    (compatible + incompatible).uniq - PluginGuard.excluded_plugins
   end
 end
