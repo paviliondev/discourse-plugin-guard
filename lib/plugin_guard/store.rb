@@ -29,7 +29,7 @@ class PluginGuard::Store
   def self.database_ready?
     ActiveRecord::Base.connection
     ActiveRecord::Base.connection.data_source_exists? 'plugin_store_rows'
-  rescue ActiveRecord::NoDatabaseError
+  rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
     false
   end
 end
