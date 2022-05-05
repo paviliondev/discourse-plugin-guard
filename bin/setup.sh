@@ -5,6 +5,7 @@ mkdir -p ${DISCOURSE_ROOT}/plugins_incompatible
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard.rb ${DISCOURSE_ROOT}/lib/plugin_guard.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/extensions/discourse.rb ${DISCOURSE_ROOT}/lib/plugin_guard/extensions/discourse.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/extensions/plugin_instance.rb ${DISCOURSE_ROOT}/lib/plugin_guard/extensions/plugin_instance.rb
+ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/authorization.rb ${DISCOURSE_ROOT}/lib/plugin_guard/authorization.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/error.rb ${DISCOURSE_ROOT}/lib/plugin_guard/error.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/handler.rb ${DISCOURSE_ROOT}/lib/plugin_guard/handler.rb
 ln -sf ${PLUGIN_GUARD_ROOT}/lib/plugin_guard/registration.rb ${DISCOURSE_ROOT}/lib/plugin_guard/registration.rb

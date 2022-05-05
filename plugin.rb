@@ -22,10 +22,6 @@ end
 
 after_initialize do
   %w(
-    ../lib/plugin_guard/authorization.rb
-    ../lib/plugin_guard/registration.rb
-    ../lib/plugin_guard/status.rb
-    ../lib/plugin_guard/store.rb
     ../extensions/admin_plugin_serializer.rb
     ../app/controllers/plugin_guard/authorization_controller.rb
     ../app/controllers/plugin_guard/registration_controller.rb

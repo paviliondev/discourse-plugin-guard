@@ -8,6 +8,7 @@ hooks:
           - mkdir -p lib/plugin_guard/extensions
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/extensions/discourse.rb lib/plugin_guard/extensions/discourse.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/extensions/plugin_instance.rb lib/plugin_guard/extensions/plugin_instance.rb
+          - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/authorization.rb lib/plugin_guard/authorization.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/error.rb lib/plugin_guard/error.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/handler.rb lib/plugin_guard/handler.rb
           - cp -rf /shared/discourse-plugin-guard/lib/plugin_guard/registration.rb lib/plugin_guard/registration.rb
