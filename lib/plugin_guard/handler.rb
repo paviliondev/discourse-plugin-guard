@@ -29,7 +29,7 @@ class ::PluginGuard::Handler
         end
 
         if in_block && line.include?(".js")
-          result += line.scan(/[\w|\-|\_]*\.js.*$/)
+          result += line.scan(/[\w|\/|\-|\_]*\.js.*$/)
         else
           if block_start
             block_start = false
