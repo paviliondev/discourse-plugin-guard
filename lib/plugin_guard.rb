@@ -10,7 +10,7 @@ class ::PluginGuard
     return false unless File.exists?("#{plugin_dir}/plugin.rb")
     @metadata = ::Plugin::Metadata.parse(File.read("#{plugin_dir}/plugin.rb"))
     plugin_name = @metadata.name
-    return false if plugin_name === "discourse-plugin-guard"
+    return false if PluginGuard.excluded_plugins.include?(plugin_name)
     @handler = ::PluginGuard::Handler.new(plugin_name, plugin_dir)
   end
 
