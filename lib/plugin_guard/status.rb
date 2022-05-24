@@ -91,6 +91,8 @@ class ::PluginGuard::Status
   end
 
   def self.update!
+    STDOUT.puts "PluginGuard updating plugin statuses on the Plugin Manager."
+
     ## Plugins which threw errors during startup or successfully initialized.
     plugins = PluginGuard::Store.hash
 

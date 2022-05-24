@@ -24,6 +24,8 @@ class ::PluginGuard::Error < StandardError
     guard = ::PluginGuard.new(plugin_path)
 
     if guard.present?
+      STDOUT.puts "PluginGuard handling an error from #{guard.handler.plugin_name}."
+
       guard.handle(message: error.message, backtrace: error.backtrace.join($/))
     else
       raise error

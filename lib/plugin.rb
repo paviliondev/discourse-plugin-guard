@@ -5,14 +5,14 @@ require_relative "plugin_guard/extensions/discourse.rb"
 require_relative "plugin_guard/extensions/plugin_instance.rb"
 
 module Plugin
-  INIT_GUARD_CALLS_KEY ||= "plugin-initialization-guard-calls"
+  @@called_count = 0
 
   def self.initialization_guard(&block)
-    called_count = Discourse.redis.get(INIT_GUARD_CALLS_KEY).to_i
 
-    if called_count === 0
+    if @@called_count === 0
       Discourse.singleton_class.prepend PluginGuard::DiscourseExtension
       Plugin::Instance.prepend PluginGuard::PluginInstanceExtension
+      STDOUT.puts "PluginGuard initialized."
     end
 
     begin
@@ -23,11 +23,11 @@ module Plugin
 
     # The initialization guard is currently called twice in application.rb, with
     # the second block sending notify_after_initialize to all plugins.
-    if called_count > 0
+    if @@called_count > 0
       PluginGuard::Status.update!
-      Discourse.redis.del(INIT_GUARD_CALLS_KEY)
+      @@called_count = 0
     else
-      Discourse.redis.incr(INIT_GUARD_CALLS_KEY)
+      @@called_count = 1
     end
   end
 end
