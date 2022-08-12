@@ -4,6 +4,7 @@
 # version: 0.1.1
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-plugin-guard.git
+# contact_emails: development@pavilion.tech
 
 register_asset "stylesheets/common/admin.scss"
 hide_plugin if self.respond_to?(:hide_plugin)
