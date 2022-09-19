@@ -33,8 +33,8 @@ Use a development workflow that looks like this
 
 As well as being deployed on client servers, this plugin is deployed on the following "canary" servers:
 
-- `tests-passed.plugins.discourse.pavilion.tech`
-- `stable.plugins.discourse.pavilion.tech`
+- `tests-passed.discourse.pluginmanager.org`
+- `stable.discourse.pluginmanager.org`
 
 If you need to deploy updates to the plugin guard ssh into the relevant server and run ``discourse_update`` (see ``bin/update.sh``).
 

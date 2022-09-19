@@ -58,7 +58,7 @@ class ::PluginGuard
   end
 
   def self.server_domain
-    development? ? "localhost:3000" : "plugins.discourse.pavilion.tech"
+    development? ? "localhost:3000" : "discourse.pluginmanager.org"
   end
 
   def self.protocol
