@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-plugin-guard
 # about: Guards your Discourse against plugin issues
-# version: 0.1.2
+# version: 0.1.3
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-plugin-guard.git
 # contact_emails: development@pavilion.tech
