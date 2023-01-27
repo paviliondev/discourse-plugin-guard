@@ -32,8 +32,8 @@ class PluginGuard::Validator
         content = File.read(path)
 
         begin
-          Barber::Ember::Precompiler.new.compile(content)
-        rescue Barber::PrecompilerError => e
+          ::Barber::Ember::Precompiler.new.compile(content)
+        rescue ::Barber::PrecompilerError => e
           raise ValidatorError.new e.instance_variable_get(:@error)
         end
       end
