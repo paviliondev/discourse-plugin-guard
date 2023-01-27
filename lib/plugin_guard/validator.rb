@@ -28,15 +28,16 @@ class PluginGuard::Validator
         end
       end
 
-      if path =~ DiscoursePluginRegistry::HANDLEBARS_REGEX
-        content = File.read(path)
+      ## TODO replace with DiscourseJsProcessor if possible
+      # if path =~ DiscoursePluginRegistry::HANDLEBARS_REGEX
+      #   content = File.read(path)
 
-        begin
-          ::Barber::Ember::Precompiler.new.compile(content)
-        rescue ::Barber::PrecompilerError => e
-          raise ValidatorError.new e.instance_variable_get(:@error)
-        end
-      end
+      #   begin
+      #     ::Barber::Ember::Precompiler.new.compile(content)
+      #   rescue ::Barber::PrecompilerError => e
+      #     raise ValidatorError.new e.instance_variable_get(:@error)
+      #   end
+      # end
     end
   end
 end
