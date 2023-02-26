@@ -7,7 +7,7 @@ class ::PluginGuard
               :handler
 
   def initialize(plugin_dir)
-    return false unless File.exists?("#{plugin_dir}/plugin.rb")
+    return false unless File.exist?("#{plugin_dir}/plugin.rb")
     @metadata = ::Plugin::Metadata.parse(File.read("#{plugin_dir}/plugin.rb"))
     plugin_name = @metadata.name
     return false if PluginGuard.excluded_plugins.include?(plugin_name)
