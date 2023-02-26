@@ -63,7 +63,7 @@ class ::PluginGuard::Handler
 
   def move(from_dir, to_dir)
     dup_plugin_dir = plugin_dir.dup
-    return unless File.exists?(dup_plugin_dir)
+    return unless File.exist?(dup_plugin_dir)
     move_to_dir = dup_plugin_dir.reverse.sub(from_dir.reverse, to_dir.reverse).reverse
     FileUtils.mv(plugin_dir, move_to_dir, force: true)
     @plugin_dir = move_to_dir
