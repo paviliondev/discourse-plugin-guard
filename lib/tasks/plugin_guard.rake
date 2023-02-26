@@ -34,7 +34,7 @@ task 'assets:precompile:before' do
         handler.precompiled_assets.each do |filename|
           pre_path = "#{handler.plugin_dir}/assets/javascripts/#{filename}"
 
-          unless File.exists?(pre_path)
+          unless File.exist?(pre_path)
             ## This will not prevent Discourse from working so we only warn
             guard.handle(message: "Asset path #{pre_path} does not exist.")
             next
