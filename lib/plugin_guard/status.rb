@@ -44,11 +44,11 @@ class ::PluginGuard::Status
     return false if errors.any?
 
     @plugins = registered_plugins
-    add_error("No registered plugins.") unless @plugins.any?
+    add_error("No registered plugins.") if @plugins.none?
     return false if errors.any?
 
     @plugins = fill_git_data
-    add_error("Failed to add git data to plugins.") unless @plugins.any?
+    add_error("Failed to add git data to plugins.") if @plugins.none?
     return false if errors.any?
 
     header_key = registration.authorization.user_key? ? "User-Api-Key" : "Api-Key"
