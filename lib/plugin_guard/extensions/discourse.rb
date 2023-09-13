@@ -24,14 +24,6 @@ module PluginGuard::DiscourseExtension
         next
       end
 
-      validator = PluginGuard::Validator.new(plugin_name)
-      begin
-        validator.validate_assets(plugin_instance)
-      rescue ValidatorError => error
-        PluginGuard::Error.handle(error, File.dirname(plugin_instance.path))
-        next
-      end
-
       @plugins << plugin_instance
       @plugins_by_name[plugin_name] = plugin_instance
 
